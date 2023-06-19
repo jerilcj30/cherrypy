@@ -1,0 +1,5 @@
+CherryPy-SQLAlchemy
+cherrypy-cors
+CherryPy
+psycopg2-binary
+

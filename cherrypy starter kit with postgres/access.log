@@ -1,0 +1,2 @@
+127.0.0.1 - - [19/Jun/2023:12:12:03] "GET /api HTTP/1.1" 301 99 "" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+127.0.0.1 - - [19/Jun/2023:12:12:03] "GET /api/ HTTP/1.1" 200 27 "" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"

@@ -22,7 +22,7 @@ celery-beat
 cors
 JWT Token
 CI
-geoip
+geoip 
 
 # Alembic usage
 

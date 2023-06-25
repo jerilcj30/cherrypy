@@ -1,0 +1,11 @@
+CherryPy-SQLAlchemy
+CherryPy
+psycopg2-binary
+marshmallow
+python-dotenv
+cherrys
+hiredis
+alembic
+celery
+flower
+

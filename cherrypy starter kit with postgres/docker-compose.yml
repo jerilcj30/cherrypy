@@ -2,7 +2,93 @@ version: '3.8'
 
 services:
 
-  db:    
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - mynetworks
+  
+  monitor:
+    container_name: flower
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+     - "5555:5555"
+    command:  ['celery', 'flower', '-A', 'tasks']
+    environment:
+      CELERY_BROKER_URL: ${BROKER_URL}
+      CELERY_RESULT_BACKEND: ${BACKEND_URL}
+    depends_on:
+      - rabbit
+      - worker
+    volumes:
+      - ./backend:/app 
+    networks:
+      - mynetworks
+
+  worker:
+    container_name: worker 
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    command: celery -A celery_app worker --loglevel INFO
+    environment:
+      CELERY_BROKER_URL: ${BROKER_URL}
+      CELERY_RESULT_BACKEND: ${BACKEND_URL}  
+    depends_on:
+      - rabbit
+    volumes:
+      - ./backend:/app      
+    networks:
+      - mynetworks  
+
+  redis:
+    container_name: redis
+    image: redis:7.0.8-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data    
+    networks:
+      - mynetworks
+  
+  redis-commander:
+    container_name: redis_commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - mynetworks
+
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--providers.file.watch=true"
+    ports:
+      - "80:80"
+    networks:
+      - "mynetworks"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  db:
+    container_name: postgres    
     image: postgres:15
     restart: always
     environment:
@@ -13,7 +99,7 @@ services:
     ports:
       - ${DB_PORT}:5432
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - mynetworks
 
@@ -30,9 +116,48 @@ services:
     networks:
       - mynetworks
   
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: backend
+  #     dockerfile: Dockerfile   
+  #   ports:
+  #     - '4200:4200'
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=Host(`tracker-frontend.localhost`)"
+  #     - "traefik.http.routers.frontend.entrypoints=web"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - "mynetworks"
+  
+  backend:
+    container_name: backend
+    build:
+      context: backend
+      dockerfile: Dockerfile    
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`tracker-backend.localhost`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+    volumes:
+      - ./backend:/app 
+    depends_on:
+      - db
+      - redis
+      - rabbit
+    networks:
+      - "mynetworks"
   
 volumes:
-  db_data:  
+  postgres-data:
+  redis-data:
+  backend-data:   
 
 networks:
   mynetworks:

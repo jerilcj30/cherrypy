@@ -23,6 +23,11 @@ class Campaign(ORBase):
     budget = Column(Integer)
     cpc = Column(Integer)
     traffic_Source = Column(String)
+    xyz = Column(String)
+
+    @property
+    def campaign_node(self):
+        return f'{self.campaign_id} {self.node}'
 
 
 

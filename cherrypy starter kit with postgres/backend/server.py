@@ -2,20 +2,31 @@
 # -*- coding: utf-8 -*-
 
 import os
+from dotenv import load_dotenv
 import cherrypy
 import tempfile
-import src.controller.root, src.controller.campaigns
-from src.models.model import ORBase
+import src.controller.root.index
+from models.model import ORBase
 from cp_sqlalchemy import SQLAlchemyTool, SQLAlchemyPlugin
-import cherrypy_cors
-
+from plugins.cp_redis.redis_plugin import RedisPlugin
+from plugins.cp_redis.redis_tool import RedisTool
 
 class Server(object):
     def __init__(self):
+
+        # Get the path to the .env file
+        env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+
+        if os.path.exists('/.dockerenv'):
+            print("inside docker container")
+        else:
+            # Load variables from .env file
+            load_dotenv(env_path)
+
         self._set_basic_config()
         self._setup()
         self._add_app()
-
+       
     def _set_basic_config(self):
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.conf_path = os.path.join(self.base_dir, "conf")
@@ -28,33 +39,29 @@ class Server(object):
 
     def _setup(self):
 
-        cherrypy_cors.install()
         # Update the global settings for the HTTP server and engine
         cherrypy.config.update(os.path.join(self.conf_path, "server.conf"))
 
     def _add_app(self):
 
         cherrypy.tree.mount(
-            src.controller.root.Root(),
-            "/api/",
+            src.controller.root.index.Root(),
+            "/api",
             os.path.join(self.conf_path, "app.conf"),
-        )        
-
-        cherrypy.tree.mount(
-            src.controller.campaigns.Campaigns(),
-            "/api/campaigns",
-            os.path.join(self.conf_path, "app.conf"),
-        )
+        )   
         
 
     def run(self):
         engine = cherrypy.engine
 
         cherrypy.tools.db = SQLAlchemyTool()
+        cherrypy.tools.rdb = RedisTool()
 
         sqlalchemy_plugin = SQLAlchemyPlugin(
-            engine, ORBase, "postgresql://postgres:johnjose@localhost:5432/postgres", echo=True
+            engine, ORBase, os.getenv("DATABASE_URL") , echo=True
         )
+
+        redis_plugin = RedisPlugin(engine, os.getenv("REDIS_HOST"), os.getenv("REDIS_PORT"), os.getenv("REDIS_DB"))
 
         if hasattr(engine, "signal_handler"):
             engine.signal_handler.subscribe()
@@ -64,6 +71,8 @@ class Server(object):
 
         sqlalchemy_plugin.subscribe()
         sqlalchemy_plugin.create()
+
+        redis_plugin.subscribe()       
 
         engine.start()
         engine.block()

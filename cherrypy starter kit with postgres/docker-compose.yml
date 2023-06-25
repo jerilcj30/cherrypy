@@ -146,18 +146,18 @@ services:
       - "traefik.http.routers.backend.rule=Host(`tracker-backend.localhost`)"
       - "traefik.http.routers.backend.entrypoints=web"
     volumes:
-      - ./backend:/app 
+      - ./backend:/app
     depends_on:
       - db
       - redis
       - rabbit
+    command: python server.py
     networks:
       - "mynetworks"
   
 volumes:
   postgres-data:
   redis-data:
-  backend-data:   
 
 networks:
   mynetworks:

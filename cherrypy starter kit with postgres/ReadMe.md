@@ -13,11 +13,13 @@
 
 # ToDOS:
 
+```
  celery-beat
  cors
  JWT Token
  CI
  Maxmind geoip 
+```
 
 # Alembic usage
 

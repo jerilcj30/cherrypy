@@ -19,15 +19,17 @@
 
 # Alembic usage
 
+```
 alembic init alembic
 alembic revision --autogenerate -m "create campaign model" # create the migrations file
 alembic upgrade heads  # push the migration to the database
-
+```
 
 # Celery
 
+```
 celery -A celery_app worker --loglevel=info   # To run the celery app. Run it outside the celery_app folder
-
+```
 # .env file (development)
 
 ```
@@ -80,13 +82,12 @@ RABBIT_HOST=rabbit
 RABBIT_USER=admin
 RABBIT_PASSWORD=johnjose
 
-
 ###### Celery
 BACKEND_URL=rpc://
 BROKER_URL=amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@${RABBIT_HOST}
-```
 
 ###### Postgres
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
 VITE_APP_API=http://localhost:3000/api
+```

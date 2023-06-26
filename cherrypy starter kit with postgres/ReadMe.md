@@ -1,21 +1,21 @@
 # Full Stack Cherrypy with Redis
 
-###### Cherrypy webserver
-###### docker & docker-compose
-###### redis-sessions, redis-cache
-###### traefik
-###### postgres, pgadmin, sqlalchemy
-###### redis, redis-commander
-###### alembic migrations
-###### celery, celery-flower
+ Cherrypy webserver
+ docker & docker-compose
+ redis-sessions, redis-cache
+ traefik
+ postgres, pgadmin, sqlalchemy
+ redis, redis-commander
+ alembic migrations
+ celery, celery-flower
 
-ToDOS:
+# ToDOS:
 
-###### celery-beat
-###### cors
-###### JWT Token
-###### CI
-###### Maxmind geoip 
+ celery-beat
+ cors
+ JWT Token
+ CI
+ Maxmind geoip 
 
 # Alembic usage
 

@@ -1,5 +1,6 @@
 # Full Stack Cherrypy with Redis
 
+ ``` 
  Cherrypy webserver
  docker & docker-compose
  redis-sessions, redis-cache
@@ -8,6 +9,7 @@
  redis, redis-commander
  alembic migrations
  celery, celery-flower
+```
 
 # ToDOS:
 

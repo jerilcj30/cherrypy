@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3.12.0-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - mynetworks
+  
+
+  redis:
+    container_name: redis
+    image: redis:7.0.8-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data    
+    networks:
+      - mynetworks
+
+  
+  redis-commander:
+    container_name: redis_commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - mynetworks
+
+
+  db:
+    container_name: postgres    
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mynetworks
+
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - '5050:80'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=jerilcj3@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=johnjose
+    depends_on:
+      - db
+    networks:
+      - mynetworks
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  mynetworks:
+    driver: bridge
+    

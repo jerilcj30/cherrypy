@@ -3,10 +3,11 @@ from celery import Celery
 from dotenv import load_dotenv
 
 if os.path.exists('/.dockerenv'):
-    print("inside docker container")
+    print("Inside Docker")
 else:
+    env_path = '../.env'
     # Load variables from .env file
-    load_dotenv()
+    load_dotenv(dotenv_path=env_path)
 
 BACKEND_URL = os.getenv('BACKEND_URL')
 BROKER_URL = os.getenv('BROKER_URL')

@@ -15,13 +15,13 @@ class Server(object):
     def __init__(self):
 
         # Get the path to the .env file
-        env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-
+        env_path_dev = os.path.join(os.path.dirname(__file__), '..', '.env')
+        
         if os.path.exists('/.dockerenv'):
-            print("inside docker container")
+            print("Inside Docker")
         else:
             # Load variables from .env file
-            load_dotenv(env_path)
+            load_dotenv(env_path_dev)
 
         self._set_basic_config()
         self._setup()

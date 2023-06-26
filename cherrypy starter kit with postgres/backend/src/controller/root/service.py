@@ -10,7 +10,7 @@ class Service(object):
         return cherrypy.request.db
     
     def get_service(self):
-
+        print("How are you jeril jose sd s s")
         # celery task
         result = add.delay(1,2)
         print(result.result)

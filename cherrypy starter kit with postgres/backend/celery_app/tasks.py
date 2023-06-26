@@ -3,4 +3,4 @@ from celery_app.celery import app
 
 @app.task
 def add(x, y):
-    return x + y + 5 + 6 + 7 + 4
+    return x + y

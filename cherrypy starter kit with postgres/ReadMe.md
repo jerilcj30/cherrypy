@@ -30,6 +30,7 @@ celery -A celery_app worker --loglevel=info   # To run the celery app. Run it ou
 
 # .env file (development)
 
+```
 ###### Postgres
 DB_HOST=localhost
 DB_USER=postgres
@@ -57,10 +58,11 @@ BROKER_URL=amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@${RABBIT_HOST}
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
 VITE_APP_API=http://localhost:3000/api
-
+```
 
 # .env file (production)
 
+```
 ###### Postgres
 DB_HOST=db
 DB_USER=postgres
@@ -82,6 +84,7 @@ RABBIT_PASSWORD=johnjose
 ###### Celery
 BACKEND_URL=rpc://
 BROKER_URL=amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@${RABBIT_HOST}
+```
 
 ###### Postgres
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
